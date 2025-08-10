@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karthik & Abi - Wedding Invitation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #8B0000, #DC143C, #B22222, #8B0000);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            height: 100vh;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .page.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .page.prev {
+            transform: translateX(-100%);
+        }
+
+        /* Welcome Page Styles */
+        .welcome-content {
+            text-align: center;
+            color: #FFD700;
+            background: rgba(139, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 25px;
+            padding: 60px 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .welcome-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FF6347);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)); }
+        }
+
+        .welcome-subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #FFFACD;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .couple-names {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #FFB6C1;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .next-btn {
+            background: linear-gradient(45deg, #FF1493, #DC143C, #B22222);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 20, 147, 0.6);
+            background: linear-gradient(45deg, #FF69B4, #FF1493, #DC143C);
+        }
+
+        /* Invitation Page Styles */
+        .invitation-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .invitation-card {
+            max-width: 500px;
+            max-height: 90vh;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            border: 3px solid rgba(255, 215, 0, 0.5);
+            position: relative;
+            background: rgba(139, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .invitation-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .invitation-card:hover .invitation-image {
+            transform: scale(1.02);
+        }
+
+        /* Music Control */
+        .music-control {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(139, 0, 0, 0.8);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #FFD700;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+            background: rgba(139, 0, 0, 1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Falling Emojis */
+        .emoji {
+            position: fixed;
+            font-size: 1.5rem;
+            pointer-events: none;
+            z-index: 500;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            from {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(139, 0, 0, 0.8);
+            color: #FFD700;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background: rgba(139, 0, 0, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Royal decorative elements */
+        .decorative-corner {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            pointer-events: none;
+        }
+
+        .decorative-corner.top-left {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+            border-top-left-radius: 20px;
+        }
+
+        .decorative-corner.top-right {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+            border-top-right-radius: 20px;
+        }
+
+        .decorative-corner.bottom-left {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+            border-bottom-left-radius: 20px;
+        }
+
+        .decorative-corner.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+            border-bottom-right-radius: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-title {
+                font-size: 2.5rem;
+            }
+            .welcome-subtitle {
+                font-size: 1.4rem;
+            }
+            .couple-names {
+                font-size: 2rem;
+            }
+            .welcome-content {
+                padding: 40px 20px;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative Corners -->
+    <div class="decorative-corner top-left"></div>
+    <div class="decorative-corner top-right"></div>
+    <div class="decorative-corner bottom-left"></div>
+    <div class="decorative-corner bottom-right"></div>
+
+    <!-- Music Control -->
+    <div class="music-control" onclick="toggleMusic()">
+        <span id="musicIcon">🎵</span>
+    </div>
+
+    <!-- Welcome Page -->
+    <div class="page active" id="welcomePage">
+        <div class="welcome-content">
+            <div class="welcome-title">💖 Wedding Invitation 💖</div>
+            <div class="welcome-subtitle">You are cordially invited to celebrate</div>
+            <div class="couple-names">Karthik & Abi</div>
+            <div style="font-size: 1.3rem; color: #FFFACD; margin: 20px 0;">
+                ✨ A Celebration of Love and Commitment ✨
+            </div>
+            <button class="next-btn" onclick="nextPage()">
+                View Invitation 💌
+            </button>
+        </div>
+    </div>
+
+    <!-- Invitation Page -->
+    <div class="page" id="invitationPage">
+        <button class="back-btn" onclick="prevPage()">← Back</button>
+        <div class="invitation-content">
+            <div class="invitation-card">
+                <img src="asset/FriendCard.jpg" alt="Wedding Invitation" class="invitation-image" 
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjcwMCIgdmlld0JveD0iMCAwIDUwMCA3MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iNzAwIiBmaWxsPSJ1cmwoI2dyYWRpZW50KSIvPgo8ZGVmcz4KPGF1cmVhckdyYWRpZW50IGlkPSJncmFkaWVudCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM4QjAwMDAiLz4KPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNEQzE0M0MiLz4KPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjOEIwMDAwIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPHRleHQgeD0iMjUwIiB5PSIzNTAiIGZpbGw9IiNGRkQ3MDAiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhIiBmb250LXNpemU9IjI0IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5XZWRkaW5nIEludml0YXRpb248L3RleHQ+Cjx0ZXh0IHg9IjI1MCIgeT0iNDAwIiBmaWxsPSIjRkZGQUNEIiBmb250LWZhbWlseT0iR2VvcmdpYSIgZm9udC1zaXplPSIxOCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+S2FydGhpayAmIEFiaTwvdGV4dD4KPC9zdmc+'; this.alt='Wedding Invitation - Please add FriendCard image';">
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="backgroundMusic" loop>
+        <source src="asset/sundari_kannal_bgm.mp3" type="audio/mpeg">
+        <!-- Fallback - will be silent if no audio file is available -->
+    </audio>
+
+    <script>
+        let currentPage = 0;
+        const pages = document.querySelectorAll('.page');
+        let musicPlaying = false;
+        const music = document.getElementById('backgroundMusic');
+        const musicIcon = document.getElementById('musicIcon');
+
+        // Falling emojis
+        const loveEmojis = ['🌹', '❤️', '💖', '💕', '💗', '🌺', '🌸', '💝', '💐', '🥰', '😍', '💑', '👰', '🤵', '💒'];
+        
+        function createFallingEmoji() {
+            const emoji = document.createElement('div');
+            emoji.className = 'emoji';
+            emoji.textContent = loveEmojis[Math.floor(Math.random() * loveEmojis.length)];
+            emoji.style.left = Math.random() * window.innerWidth + 'px';
+            emoji.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            emoji.style.animationDelay = Math.random() * 2 + 's';
+            
+            document.body.appendChild(emoji);
+            
+            setTimeout(() => {
+                emoji.remove();
+            }, 5000);
+        }
+
+        // Create falling emojis continuously
+        setInterval(createFallingEmoji, 300);
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                pages[currentPage].classList.remove('active');
+                pages[currentPage].classList.add('prev');
+                currentPage++;
+                pages[currentPage].classList.add('active');
+                pages[currentPage].classList.remove('prev');
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                pages[currentPage].classList.remove('active');
+                currentPage--;
+                pages[currentPage].classList.add('active');
+                pages[currentPage].classList.remove('prev');
+                
+                setTimeout(() => {
+                    pages[currentPage + 1].classList.remove('prev');
+                }, 800);
+            }
+        }
+
+        function toggleMusic() {
+            if (musicPlaying) {
+                music.pause();
+                musicIcon.textContent = '🔇';
+                musicPlaying = false;
+            } else {
+                music.play().catch(e => {
+                    console.log('Audio play failed:', e);
+                    // Fallback - just change icon to show music is "on" even if no sound
+                });
+                musicIcon.textContent = '🎵';
+                musicPlaying = true;
+            }
+        }
+
+        // Auto-start music (will only work after user interaction due to browser policies)
+        document.addEventListener('click', function() {
+            if (!musicPlaying) {
+                toggleMusic();
+            }
+        }, { once: true });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextPage();
+            } else if (e.key === 'ArrowLeft') {
+                prevPage();
+            } else if (e.key === 'm' || e.key === 'M') {
+                toggleMusic();
+            }
+        });
+
+        // Touch/swipe support
+        let startX = 0;
+        let endX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            endX = e.changedTouches[0].clientX;
+            const difference = startX - endX;
+            
+            if (Math.abs(difference) > 50) { // Minimum swipe distance
+                if (difference > 0) {
+                    nextPage(); // Swipe left to go forward
+                } else {
+                    prevPage(); // Swipe right to go back
+                }
+            }
+        });
+    </script>
+</body>
+</html>
